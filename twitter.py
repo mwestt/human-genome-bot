@@ -55,7 +55,7 @@ class HumanGenomeBot():
         origin.push()
 
 
-    def tweet(self, tweet_length=280, commit=True):
+    def tweet(self, tweet_length=280, commit=True, augment_repeats=True):
         """Make the next tweet in the sequence. Identifies the correct region
         of the genome, downloads the relevant chromosome from UCSC, and Tweets
         via Tweepy client."""
@@ -106,27 +106,29 @@ class HumanGenomeBot():
             self.client.create_tweet(text=tweet)
         except tweepy.errors.Forbidden:  # Duplication, may cause Twitter API 403
 
-            augment_dict = {
-                'A': 'Ą', 'C': 'Ç', 'T':'Ţ', 'G':'Ģ', 'N':'Ņ',
-                'a': 'ą', 'c': 'ç', 't':'ţ', 'g': 'ģ'
-            }
+            if augment_repeats == True:  # Add diacritics at random if sequence repeated
+                
+                augment_dict = {
+                    'A': 'Ą', 'C': 'Ç', 'T':'Ţ', 'G':'Ģ', 'N':'Ņ',
+                    'a': 'ą', 'c': 'ç', 't':'ţ', 'g': 'ģ'
+                }
 
-            # Get indices of modal character
-            modal_char = collections.Counter(tweet).most_common(1)[0][0]
-            char_indices = [i for i, letter in enumerate(tweet) if letter == modal_char]
+                # Get indices of modal character
+                modal_char = collections.Counter(tweet).most_common(1)[0][0]
+                char_indices = [i for i, letter in enumerate(tweet) if letter == modal_char]
 
-            # Select random subset of indices corresponding to position of modal char
-            # n = np.random.randint(1, 6)
-            n = 2
-            augment_pos = np.random.choice(char_indices, size=n, replace=False)
+                # Select random subset of indices corresponding to position of modal char
+                # n = np.random.randint(1, 6)
+                n = 2
+                augment_pos = np.random.choice(char_indices, size=n, replace=False)
 
-            # Perform augmentation
-            alternative = augment_dict[modal_char]  # Select alternative glyph to replace
-            tweet_list = list(tweet)
-            tweet_augment = ''.join([alternative if i in augment_pos else tweet_list[i] for i in range(len(tweet_list))])
+                # Perform augmentation
+                alternative = augment_dict[modal_char]  # Select alternative glyph to replace
+                tweet_list = list(tweet)
+                tweet_augment = ''.join([alternative if i in augment_pos else tweet_list[i] for i in range(len(tweet_list))])
 
-            # Tweet augmented tweet
-            self.client.create_tweet(text=tweet_augment)
+                # Tweet augmented tweet
+                self.client.create_tweet(text=tweet_augment)
 
         if index == n_tweets:
             index = 0
