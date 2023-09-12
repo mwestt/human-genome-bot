@@ -1,5 +1,5 @@
-import json
 import os
+import json
 from twitter import HumanGenomeBot
 
 
@@ -19,7 +19,7 @@ def main(request):
 
     bot = HumanGenomeBot(auth_dict)
     bot.tweet()
-    bot.commit()
+    # bot.commit()
 
 if __name__ == '__main__':
     request = None
