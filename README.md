@@ -5,4 +5,8 @@
 
 The greatest story ever written. Tweeting out the entire GRCh38 Human Reference Genome, 280 bases at a time.
 
-This repository hosts code for a Twitter bot ([@HumanGenomeBot](https://twitter.com/HumanGenomeBot)) that tweets the entire human genome.
+This repository hosts code for a Twitter bot ([@HumanGenomeBot](https://twitter.com/HumanGenomeBot)) that is scheduled to tweet the entire human genome from start to finish.
+
+With each tweet limited to 280 characters, the 3.1b bases of the human genome are going to require approximately 11 million tweets to get through. 
+
+With Twitter/X Free-tier access to the API limiting the bot to 50 tweets a day, this project is scheduled to finish in approximately 620 years. 
