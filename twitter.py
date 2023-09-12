@@ -79,7 +79,7 @@ class HumanGenomeBot():
         # Tweet header tweet if first sequence in a new chromosome
         if index == 0:
             header_tweet = 'Chromosome {}'.format(chromosome)        
-            # self.client.create_tweet(text=header_tweet)
+            self.client.create_tweet(text=header_tweet)
 
         # Open relevant chromosome
         # seq = pd.read_csv('genome/chr{}.fa'.format(chromosome))  # Loading local copy
@@ -102,18 +102,8 @@ class HumanGenomeBot():
         tweet = one_long[index*tweet_length:index*tweet_length + tweet_length]
 
         try:  # Try and tweet
-            pass
-            # self.client.create_tweet(text=tweet)
+            self.client.create_tweet(text=tweet)
         except tweepy.errors.Forbidden:  # Duplication, may cause Twitter API 403
-            # if tweet == last_tweet:  
-                # placeholder_tweet = 'Ibid.'  # Tweet a placeholder instead
-                # while True:  # Append full stop to placeholder too if placeholder is duplicated
-                #     try:
-                #         self.client.create_tweet(text=placeholder_tweet)
-                #         break
-                #     except tweepy.errors.Forbidden:
-                #         print('Duplicated Tweet, adding full stop.')
-                #         placeholder_tweet += '.'
 
             augment_dict = {
                 'A': 'Ą', 'C': 'Ç', 'T':'Ţ', 'G':'Ģ', 'N':'Ņ',
@@ -135,7 +125,7 @@ class HumanGenomeBot():
             tweet_augment = ''.join([alternative if i in augment_pos else tweet_list[i] for i in range(len(tweet_list))])
 
             # Tweet augmented tweet
-            # self.client.create_tweet(text=tweet_augment)
+            self.client.create_tweet(text=tweet_augment)
 
         if index == n_tweets:
             index = 0
