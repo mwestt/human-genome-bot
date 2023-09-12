@@ -43,18 +43,19 @@ class HumanGenomeBot():
         return api, client
 
 
-    def commit(self):
+    def commit(self, message='commit from python'):
+        """Commit most recent tweet text file to repo."""
 
         repo = Repo()
 
         repo.index.add(['most_recent_tweet.txt'])
-        repo.index.commit('commit from python')
+        repo.index.commit(message)
 
         origin = repo.remotes[0]
         origin.push()
 
 
-    def tweet(self, tweet_length=280):
+    def tweet(self, tweet_length=280, commit=True):
         """Make the next tweet in the sequence. Identifies the correct region
         of the genome, downloads the relevant chromosome from UCSC, and Tweets
         via Tweepy client."""
@@ -137,6 +138,9 @@ class HumanGenomeBot():
         text_file = open("most_recent_tweet.txt", "w")
         text_file.write('chromosome={},index={},last_tweet={}'.format(chromosome, index, tweet))
         text_file.close()
+
+        if commit:
+            self.commit(message='chromosome={},index={}'.format(chromosome, index))
 
         return tweet
 
