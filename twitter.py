@@ -48,7 +48,7 @@ class HumanGenomeBot():
 
         repo = Repo()
 
-        repo.index.add(['most_recent_tweet.txt'])
+        repo.index.add(['next_tweet.txt'])
         repo.index.commit(message)
 
         origin = repo.remotes[0]
@@ -60,7 +60,7 @@ class HumanGenomeBot():
         of the genome, downloads the relevant chromosome from UCSC, and Tweets
         via Tweepy client."""
         # Get most recent tweet - chromosome and index
-        file = open("most_recent_tweet.txt", "r").read()
+        file = open("next_tweet.txt", "r").read()
         file_list = file.split(',')
         print(file)
         chromosome = file_list[0].split('=')[-1]
@@ -135,7 +135,7 @@ class HumanGenomeBot():
             index += 1
 
         # Save chromosome, index, and last tweet to disk, commit to repo
-        text_file = open("most_recent_tweet.txt", "w")
+        text_file = open("next_tweet.txt", "w")
         text_file.write('chromosome={},index={},last_tweet={}'.format(chromosome, index, tweet))
         text_file.close()
 
