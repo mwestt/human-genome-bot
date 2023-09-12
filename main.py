@@ -19,7 +19,7 @@ def main(request):
 
     bot = HumanGenomeBot(auth_dict)
     bot.tweet()
-
+    bot.commit()
 
 if __name__ == '__main__':
     request = None

@@ -5,7 +5,7 @@ import collections
 import numpy as np
 import pandas as pd
 from urllib.request import urlopen  
-
+from git.repo import Repo
 
 class HumanGenomeBot():
 
@@ -43,6 +43,17 @@ class HumanGenomeBot():
         return api, client
 
 
+    def commit(self):
+
+        repo = Repo()
+
+        repo.index.add(['most_recent_tweet.txt'])
+        repo.index.commit('commit from python')
+
+        origin = repo.remotes[0]
+        origin.push()
+
+
     def tweet(self, tweet_length=280):
         """Make the next tweet in the sequence. Identifies the correct region
         of the genome, downloads the relevant chromosome from UCSC, and Tweets
@@ -68,7 +79,7 @@ class HumanGenomeBot():
         # Tweet header tweet if first sequence in a new chromosome
         if index == 0:
             header_tweet = 'Chromosome {}'.format(chromosome)        
-            self.client.create_tweet(text=header_tweet)
+            # self.client.create_tweet(text=header_tweet)
 
         # Open relevant chromosome
         # seq = pd.read_csv('genome/chr{}.fa'.format(chromosome))  # Loading local copy
@@ -91,7 +102,8 @@ class HumanGenomeBot():
         tweet = one_long[index*tweet_length:index*tweet_length + tweet_length]
 
         try:  # Try and tweet
-            self.client.create_tweet(text=tweet)
+            pass
+            # self.client.create_tweet(text=tweet)
         except tweepy.errors.Forbidden:  # Duplication, may cause Twitter API 403
             # if tweet == last_tweet:  
                 # placeholder_tweet = 'Ibid.'  # Tweet a placeholder instead
@@ -113,7 +125,8 @@ class HumanGenomeBot():
             char_indices = [i for i, letter in enumerate(tweet) if letter == modal_char]
 
             # Select random subset of indices corresponding to position of modal char
-            n = np.random.randint(1, 6)
+            # n = np.random.randint(1, 6)
+            n = 2
             augment_pos = np.random.choice(char_indices, size=n, replace=False)
 
             # Perform augmentation
@@ -122,7 +135,7 @@ class HumanGenomeBot():
             tweet_augment = ''.join([alternative if i in augment_pos else tweet_list[i] for i in range(len(tweet_list))])
 
             # Tweet augmented tweet
-            self.client.create_tweet(text=tweet_augment)
+            # self.client.create_tweet(text=tweet_augment)
 
         if index == n_tweets:
             index = 0
