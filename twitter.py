@@ -6,6 +6,7 @@ import numpy as np
 import pandas as pd
 from urllib.request import urlopen  
 from git.repo import Repo
+from google.cloud import storage
 
 class HumanGenomeBot():
 
@@ -60,9 +61,7 @@ class HumanGenomeBot():
 
 
     def gcp_read(self):
-
-        from google.cloud import storage
-
+        
         client = storage.Client()
         bucket = client.get_bucket('human-genome-bucket')
         blob = bucket.get_blob('next_tweet.txt')
@@ -72,8 +71,6 @@ class HumanGenomeBot():
 
 
     def gcp_write(self, next_tweet):
-
-        from google.cloud import storage
 
         client = storage.Client()
         bucket = client.get_bucket('human-genome-bucket')
