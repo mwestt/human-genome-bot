@@ -101,6 +101,7 @@ class HumanGenomeBot():
 
         # Get tweet based on slice of chromosome string
         tweet = one_long[index*tweet_length:index*tweet_length + tweet_length]
+        end_index = index*tweet_length + tweet_length
 
         try:  # Try and tweet
             self.client.create_tweet(text=tweet)
@@ -138,7 +139,7 @@ class HumanGenomeBot():
 
         # Save chromosome, index, and last tweet to disk, commit to repo
         text_file = open("next_tweet.txt", "w")
-        text_file.write('chromosome={},index={},last_tweet={}'.format(chromosome, index, tweet))
+        text_file.write('chromosome={},index={},last_tweet={},end_index={}'.format(chromosome, index, tweet, end_index))
         text_file.close()
 
         if commit:
