@@ -87,20 +87,9 @@ class HumanGenomeBot():
         via Tweepy client."""
         
         # Get most recent tweet - chromosome and index
-        # GCloud flow - clone whole repo into tmp/
-        # try:
-        #     # file = open("tmp/next_tweet.txt", "r").read()
-        #     repo = Repo.clone_from('https://github.com/mwestt/human-genome-bot.git', 'tmp')
-        #     file = open("tmp/next_tweet.txt", "r").read()
-        # except FileNotFoundError:  # No persistent file storage in Gen 1 cloud functions
-        #     # Clone entire repo into /tmp
-        #     repo = Repo.clone_from('https://github.com/mwestt/human-genome-bot.git', '/tmp')
-        #     file = open("/tmp/next_tweet.txt", "r").read()
-
-        #     # # url = 'https://raw.githubusercontent.com/mwestt/human-genome-bot/main/next_tweet.txt'
-        #     # file = requests.get(url).text
-
+        # GCloud flow - read from bucket
         file = self.gcp_read()
+        # file = open("tmp/next_tweet.txt", "r").read()  # Local flow
         print(file)
 
         file_list = file.split(',')
@@ -122,7 +111,7 @@ class HumanGenomeBot():
         # Tweet header tweet if first sequence in a new chromosome
         if index == 0:
             header_tweet = 'Chromosome {}'.format(chromosome)        
-            # self.client.create_tweet(text=header_tweet)
+            self.client.create_tweet(text=header_tweet)
 
         # Open relevant chromosome
         # seq = pd.read_csv('genome/chr{}.fa'.format(chromosome))  # Loading local copy
@@ -130,21 +119,16 @@ class HumanGenomeBot():
         print("Downloading Chromosome {} from UCSC...".format(chromosome))
         URL = "https://hgdownload.soe.ucsc.edu/goldenPath/hg38/chromosomes/chr{}.fa.gz".format(chromosome)
         url = urlopen(URL)
-        try:
-            output = open('tmp/zipFile.gz', 'wb')        
-        except (FileNotFoundError, OSError):
-            output = open('/tmp/zipFile.gz', 'wb')        
+        
+        output = open('/tmp/zipFile.gz', 'wb')        
         output.write(url.read())
         output.close()
         print('Done')
 
-        try:
-            seq = pd.read_csv('tmp/zipFile.gz', compression='gzip')  
-            os.remove('tmp/zipFile.gz')
-        except (FileNotFoundError, OSError):
-            seq = pd.read_csv('/tmp/zipFile.gz', compression='gzip')  
-            os.remove('/tmp/zipFile.gz')
+        print(os.path.join(os.tmpdir(), 'zipFile.gz')
 
+        seq = pd.read_csv('/tmp/zipFile.gz', compression='gzip')  
+        os.remove('/tmp/zipFile.gz')
 
         one_long = ''.join(seq['>chr{}'.format(chromosome)])
         n_tweets = len(one_long) // tweet_length
@@ -154,8 +138,7 @@ class HumanGenomeBot():
         end_index = index*tweet_length + tweet_length  # Can be used to refactor above slicing for dynamic tweet length
 
         try:  # Try and tweet
-            # self.client.create_tweet(text=tweet)
-            pass
+            self.client.create_tweet(text=tweet)
         except tweepy.errors.Forbidden:  # Duplication, may cause Twitter API 403
 
             if augment_repeats == True:  # Add diacritics at random if sequence repeated
@@ -180,7 +163,7 @@ class HumanGenomeBot():
                 tweet_augment = ''.join([alternative if i in augment_pos else tweet_list[i] for i in range(len(tweet_list))])
 
                 # Tweet augmented tweet
-                # self.client.create_tweet(text=tweet_augment)
+                self.client.create_tweet(text=tweet_augment)
 
         if index == n_tweets:
             index = 0
