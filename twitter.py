@@ -108,7 +108,7 @@ class HumanGenomeBot():
         # Tweet header tweet if first sequence in a new chromosome
         if index == 0:
             header_tweet = 'Chromosome {}'.format(chromosome)        
-            self.client.create_tweet(text=header_tweet)
+            # self.client.create_tweet(text=header_tweet)
 
         # Open relevant chromosome
         # seq = pd.read_csv('genome/chr{}.fa'.format(chromosome))  # Loading local copy
@@ -135,7 +135,8 @@ class HumanGenomeBot():
         end_index = index*tweet_length + tweet_length  # Can be used to refactor above slicing for dynamic tweet length
 
         try:  # Try and tweet
-            self.client.create_tweet(text=tweet)
+            pass
+            # self.client.create_tweet(text=tweet)
         except tweepy.errors.Forbidden:  # Duplication, may cause Twitter API 403
 
             if augment_repeats == True:  # Add diacritics at random if sequence repeated
@@ -160,7 +161,7 @@ class HumanGenomeBot():
                 tweet_augment = ''.join([alternative if i in augment_pos else tweet_list[i] for i in range(len(tweet_list))])
 
                 # Tweet augmented tweet
-                self.client.create_tweet(text=tweet_augment)
+                # self.client.create_tweet(text=tweet_augment)
 
         if index == n_tweets:
             index = 0
