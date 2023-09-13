@@ -122,7 +122,7 @@ class HumanGenomeBot():
         output.close()
         print('Done')
 
-        print(os.path.join(os.tmpdir(), 'zipFile.gz')
+        print(os.path.join(os.tmpdir(), 'zipFile.gz'))
 
         seq = pd.read_csv('/tmp/zipFile.gz', compression='gzip')  
         os.remove('/tmp/zipFile.gz')
