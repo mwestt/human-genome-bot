@@ -69,7 +69,7 @@ class HumanGenomeBot():
         blob = bucket.get_blob('next_tweet.txt')
         data = blob.download_as_string()
 
-        return data
+        return str(data)
 
 
     def gcp_write(self, next_tweet):
