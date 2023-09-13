@@ -49,6 +49,10 @@ class HumanGenomeBot():
 
         # print(os.environ.get('GIT_COMMON_DIR'))
         
+        print(os.listdir())
+        print(os.getcwd())
+        print(os.listdir('/workspace'))
+
         repo = Repo(search_parent_directories=True)
         # except:
         #     repo = Repo(search_parent_directories=True)
