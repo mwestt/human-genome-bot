@@ -44,24 +44,23 @@ class HumanGenomeBot():
         return api, client
 
 
-    def commit(self, message='commit from python'):
+    def commit(self, repo, message='commit from python'):
         """Commit most recent tweet text file to repo."""
 
-        # print(os.environ.get('GIT_COMMON_DIR'))
-        
         print(os.listdir())
         print(os.getcwd())
-        print(os.listdir('/workspace'))
 
-        repo = Repo(search_parent_directories=True)
+
+        
+        # repo = Repo(search_parent_directories=True)
         # except:
         #     repo = Repo(search_parent_directories=True)
         print(repo.git.status())
 
         try:
-            repo.index.add(['/tmp/next_tweet.txt'])
-        except ValueError:
             repo.index.add(['tmp/next_tweet.txt'])
+        except ValueError:
+            repo.index.add(['/tmp/next_tweet.txt'])
 
         repo.index.commit(message)
 
@@ -75,11 +74,18 @@ class HumanGenomeBot():
         via Tweepy client."""
         
         # Get most recent tweet - chromosome and index
+        # GCloud flow - clone whole repo into tmp/
         try:
+            # file = open("tmp/next_tweet.txt", "r").read()
+            repo = Repo.clone_from('https://github.com/mwestt/human-genome-bot.git', 'tmp')
             file = open("tmp/next_tweet.txt", "r").read()
         except FileNotFoundError:  # No persistent file storage in Gen 1 cloud functions
-            url = 'https://raw.githubusercontent.com/mwestt/human-genome-bot/main/next_tweet.txt'
-            file = requests.get(url).text
+            # Clone entire repo into /tmp
+            repo = Repo.clone_from('https://github.com/mwestt/human-genome-bot.git', '/tmp')
+            file = open("/tmp/next_tweet.txt", "r").read()
+
+            # # url = 'https://raw.githubusercontent.com/mwestt/human-genome-bot/main/next_tweet.txt'
+            # file = requests.get(url).text
         
         file_list = file.split(',')
         print(file)
@@ -177,7 +183,7 @@ class HumanGenomeBot():
         text_file.close()
 
         if commit:
-            self.commit(message='chromosome={},index={}'.format(chromosome, index))
+            self.commit(repo, message='chromosome={},index={}'.format(chromosome, index))
 
         return tweet
 
