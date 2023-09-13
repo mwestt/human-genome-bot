@@ -88,13 +88,13 @@ class HumanGenomeBot():
         print("Downloading Chromosome {} from UCSC...".format(chromosome))
         URL = "https://hgdownload.soe.ucsc.edu/goldenPath/hg38/chromosomes/chr{}.fa.gz".format(chromosome)
         url = urlopen(URL)
-        output = open('tmp/zipFile.gz', 'wb')        
+        output = open('/tmp/zipFile.gz', 'wb')        
         output.write(url.read())
         output.close()
         print('Done')
 
-        seq = pd.read_csv('tmp/zipFile.gz', compression='gzip')  
-        os.remove('tmp/zipFile.gz')
+        seq = pd.read_csv('/tmp/zipFile.gz', compression='gzip')  
+        os.remove('/tmp/zipFile.gz')
 
         one_long = ''.join(seq['>chr{}'.format(chromosome)])
         n_tweets = len(one_long) // tweet_length
