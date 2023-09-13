@@ -2,6 +2,7 @@ import os
 import json
 import tweepy
 import collections
+import requests
 import numpy as np
 import pandas as pd
 from urllib.request import urlopen  
@@ -48,7 +49,7 @@ class HumanGenomeBot():
 
         repo = Repo()
 
-        repo.index.add(['next_tweet.txt'])
+        repo.index.add(['/tmp/next_tweet.txt'])
         repo.index.commit(message)
 
         origin = repo.remotes[0]
@@ -59,13 +60,20 @@ class HumanGenomeBot():
         """Make the next tweet in the sequence. Identifies the correct region
         of the genome, downloads the relevant chromosome from UCSC, and Tweets
         via Tweepy client."""
+        
         # Get most recent tweet - chromosome and index
-        file = open("next_tweet.txt", "r").read()
+        try:
+            file = open("/tmp/next_tweet.txt", "r").read()
+        except FileNotFoundError:  # No persistent file storage in Gen 1 cloud functions
+            url = 'https://raw.githubusercontent.com/mwestt/human-genome-bot/main/next_tweet.txt'
+            file = requests.get(url).text
+        
         file_list = file.split(',')
         print(file)
         chromosome = file_list[0].split('=')[-1]
         index = int(file_list[1].split('=')[-1])
         last_tweet = file_list[2].split('=')[-1]
+        end_index = file_list[3].split('=')[-1]
 
         if chromosome == 'Job done.':
             self.client.create_tweet(text='The end.')
@@ -88,7 +96,10 @@ class HumanGenomeBot():
         print("Downloading Chromosome {} from UCSC...".format(chromosome))
         URL = "https://hgdownload.soe.ucsc.edu/goldenPath/hg38/chromosomes/chr{}.fa.gz".format(chromosome)
         url = urlopen(URL)
-        output = open('/tmp/zipFile.gz', 'wb')        
+        try:
+            output = open('/tmp/zipFile.gz', 'wb')        
+        except FileNotFoundError:
+            output = open('tmp/zipFile.gz', 'wb')        
         output.write(url.read())
         output.close()
         print('Done')
@@ -101,7 +112,7 @@ class HumanGenomeBot():
 
         # Get tweet based on slice of chromosome string
         tweet = one_long[index*tweet_length:index*tweet_length + tweet_length]
-        end_index = index*tweet_length + tweet_length
+        end_index = index*tweet_length + tweet_length  # Can be used to refactor above slicing for dynamic tweet length
 
         try:  # Try and tweet
             self.client.create_tweet(text=tweet)
@@ -138,7 +149,7 @@ class HumanGenomeBot():
             index += 1
 
         # Save chromosome, index, and last tweet to disk, commit to repo
-        text_file = open("next_tweet.txt", "w")
+        text_file = open("/tmp/next_tweet.txt", "w")
         text_file.write('chromosome={},index={},last_tweet={},end_index={}'.format(chromosome, index, tweet, end_index))
         text_file.close()
 
