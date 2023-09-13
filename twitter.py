@@ -63,7 +63,7 @@ class HumanGenomeBot():
         
         # Get most recent tweet - chromosome and index
         try:
-            file = open("/tmp/next_tweet.txt", "r").read()
+            file = open("tmp/next_tweet.txt", "r").read()
         except FileNotFoundError:  # No persistent file storage in Gen 1 cloud functions
             url = 'https://raw.githubusercontent.com/mwestt/human-genome-bot/main/next_tweet.txt'
             file = requests.get(url).text
@@ -97,19 +97,19 @@ class HumanGenomeBot():
         URL = "https://hgdownload.soe.ucsc.edu/goldenPath/hg38/chromosomes/chr{}.fa.gz".format(chromosome)
         url = urlopen(URL)
         try:
-            output = open('/tmp/zipFile.gz', 'wb')        
-        except FileNotFoundError:
             output = open('tmp/zipFile.gz', 'wb')        
+        except FileNotFoundError:
+            output = open('/tmp/zipFile.gz', 'wb')        
         output.write(url.read())
         output.close()
         print('Done')
 
         try:
-            seq = pd.read_csv('/tmp/zipFile.gz', compression='gzip')  
-            os.remove('/tmp/zipFile.gz')
-        except FileNotFoundError:
             seq = pd.read_csv('tmp/zipFile.gz', compression='gzip')  
             os.remove('tmp/zipFile.gz')
+        except FileNotFoundError:
+            seq = pd.read_csv('/tmp/zipFile.gz', compression='gzip')  
+            os.remove('/tmp/zipFile.gz')
 
 
         one_long = ''.join(seq['>chr{}'.format(chromosome)])
@@ -155,9 +155,9 @@ class HumanGenomeBot():
 
         # Save chromosome, index, and last tweet to disk, commit to repo
         try:
-            text_file = open("/tmp/next_tweet.txt", "w")
-        except FileNotFoundError:
             text_file = open("tmp/next_tweet.txt", "w")
+        except FileNotFoundError:
+            text_file = open("/tmp/next_tweet.txt", "w")
 
         text_file.write('chromosome={},index={},last_tweet={},end_index={}'.format(chromosome, index, tweet, end_index))
         text_file.close()
