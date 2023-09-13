@@ -86,7 +86,6 @@ class HumanGenomeBot():
         # Get most recent tweet - chromosome and index
         # GCloud flow - read from bucket
         file = self.gcp_read()
-        # file = open("tmp/next_tweet.txt", "r").read()  # Local flow
         print(file)
 
         file_list = file.split(',')
@@ -169,15 +168,6 @@ class HumanGenomeBot():
         # Save chromosome, index, and last tweet to storage bucket or disk
         next_tweet = 'chromosome={},index={},last_tweet={},end_index={}'.format(chromosome, index, tweet, end_index)
         self.gcp_write(next_tweet)
-
-        # Save chromosome, index, and last tweet to disk, commit to repo
-        # try:
-        #     text_file = open("tmp/next_tweet.txt", "w")
-        # except (FileNotFoundError, OSError):
-        #     text_file = open("/tmp/next_tweet.txt", "w")
-
-        # text_file.write('chromosome={},index={},last_tweet={},end_index={}'.format(chromosome, index, tweet, end_index))
-        # text_file.close()
 
         if commit:
             self.commit(message='chromosome={},index={}'.format(chromosome, index))
