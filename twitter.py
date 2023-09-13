@@ -44,18 +44,10 @@ class HumanGenomeBot():
         return api, client
 
 
-    def commit(self, repo, message='commit from python'):
+    def commit(self, message='commit from python'):
         """Commit most recent tweet text file to repo."""
 
-        print(os.listdir())
-        print(os.getcwd())
-
-
-        
-        # repo = Repo(search_parent_directories=True)
-        # except:
-        #     repo = Repo(search_parent_directories=True)
-        print(repo.git.status())
+        repo = Repo()
 
         try:
             repo.index.add(['tmp/next_tweet.txt'])
@@ -68,27 +60,52 @@ class HumanGenomeBot():
         origin.push()
 
 
-    def tweet(self, tweet_length=280, commit=True, augment_repeats=True):
+    def gcp_read(self):
+
+        from google.cloud import storage
+
+        client = storage.Client()
+        bucket = client.get_bucket('human-genome-bucket')
+        blob = bucket.get_blob('next_tweet.txt')
+        data = blob.download_as_string()
+
+        return data
+
+
+    def gcp_write(self, next_tweet):
+
+        from google.cloud import storage
+
+        client = storage.Client()
+        bucket = client.get_bucket('human-genome-bucket')
+        blob = bucket.get_blob('next_tweet.txt')
+        blob.upload_from_string(next_tweet)
+
+
+
+    def tweet(self, tweet_length=280, commit=False, augment_repeats=True):
         """Make the next tweet in the sequence. Identifies the correct region
         of the genome, downloads the relevant chromosome from UCSC, and Tweets
         via Tweepy client."""
         
         # Get most recent tweet - chromosome and index
         # GCloud flow - clone whole repo into tmp/
-        try:
-            # file = open("tmp/next_tweet.txt", "r").read()
-            repo = Repo.clone_from('https://github.com/mwestt/human-genome-bot.git', 'tmp')
-            file = open("tmp/next_tweet.txt", "r").read()
-        except FileNotFoundError:  # No persistent file storage in Gen 1 cloud functions
-            # Clone entire repo into /tmp
-            repo = Repo.clone_from('https://github.com/mwestt/human-genome-bot.git', '/tmp')
-            file = open("/tmp/next_tweet.txt", "r").read()
+        # try:
+        #     # file = open("tmp/next_tweet.txt", "r").read()
+        #     repo = Repo.clone_from('https://github.com/mwestt/human-genome-bot.git', 'tmp')
+        #     file = open("tmp/next_tweet.txt", "r").read()
+        # except FileNotFoundError:  # No persistent file storage in Gen 1 cloud functions
+        #     # Clone entire repo into /tmp
+        #     repo = Repo.clone_from('https://github.com/mwestt/human-genome-bot.git', '/tmp')
+        #     file = open("/tmp/next_tweet.txt", "r").read()
 
-            # # url = 'https://raw.githubusercontent.com/mwestt/human-genome-bot/main/next_tweet.txt'
-            # file = requests.get(url).text
-        
-        file_list = file.split(',')
+        #     # # url = 'https://raw.githubusercontent.com/mwestt/human-genome-bot/main/next_tweet.txt'
+        #     # file = requests.get(url).text
+
+        file = self.gcp_read()
         print(file)
+
+        file_list = file.split(',')
         chromosome = file_list[0].split('=')[-1]
         index = int(file_list[1].split('=')[-1])
         last_tweet = file_list[2].split('=')[-1]
@@ -173,17 +190,21 @@ class HumanGenomeBot():
         else:
             index += 1
 
-        # Save chromosome, index, and last tweet to disk, commit to repo
-        try:
-            text_file = open("tmp/next_tweet.txt", "w")
-        except (FileNotFoundError, OSError):
-            text_file = open("/tmp/next_tweet.txt", "w")
+        # Save chromosome, index, and last tweet to storage bucket or disk
+        next_tweet = 'chromosome={},index={},last_tweet={},end_index={}'.format(chromosome, index, tweet, end_index)
+        self.gcp_write(next_tweet)
 
-        text_file.write('chromosome={},index={},last_tweet={},end_index={}'.format(chromosome, index, tweet, end_index))
-        text_file.close()
+        # Save chromosome, index, and last tweet to disk, commit to repo
+        # try:
+        #     text_file = open("tmp/next_tweet.txt", "w")
+        # except (FileNotFoundError, OSError):
+        #     text_file = open("/tmp/next_tweet.txt", "w")
+
+        # text_file.write('chromosome={},index={},last_tweet={},end_index={}'.format(chromosome, index, tweet, end_index))
+        # text_file.close()
 
         if commit:
-            self.commit(repo, message='chromosome={},index={}'.format(chromosome, index))
+            self.commit(message='chromosome={},index={}'.format(chromosome, index))
 
         return tweet
 
