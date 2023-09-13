@@ -67,9 +67,9 @@ class HumanGenomeBot():
         client = storage.Client()
         bucket = client.get_bucket('human-genome-bucket')
         blob = bucket.get_blob('next_tweet.txt')
-        data = blob.download_as_string()
+        data = blob.download_as_text()
 
-        return str(data)
+        return data
 
 
     def gcp_write(self, next_tweet):
