@@ -101,7 +101,7 @@ class HumanGenomeBot():
         # Tweet header tweet if first sequence in a new chromosome
         if index == 0:
             header_tweet = 'Chromosome {}'.format(chromosome)        
-            self.client.create_tweet(text=header_tweet)
+            # self.client.create_tweet(text=header_tweet)
 
         # Open relevant chromosome
         # seq = pd.read_csv('genome/chr{}.fa'.format(chromosome))  # Loading local copy
