@@ -49,7 +49,11 @@ class HumanGenomeBot():
 
         repo = Repo()
 
-        repo.index.add(['/tmp/next_tweet.txt'])
+        try:
+            repo.index.add(['/tmp/next_tweet.txt'])
+        except ValueError:
+            repo.index.add(['tmp/next_tweet.txt'])
+            
         repo.index.commit(message)
 
         origin = repo.remotes[0]
