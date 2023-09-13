@@ -111,7 +111,7 @@ class HumanGenomeBot():
         try:
             seq = pd.read_csv('tmp/zipFile.gz', compression='gzip')  
             os.remove('tmp/zipFile.gz')
-        except FileNotFoundError, OSError:
+        except (FileNotFoundError, OSError):
             seq = pd.read_csv('/tmp/zipFile.gz', compression='gzip')  
             os.remove('/tmp/zipFile.gz')
 
