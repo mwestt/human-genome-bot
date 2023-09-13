@@ -53,7 +53,7 @@ class HumanGenomeBot():
             repo.index.add(['/tmp/next_tweet.txt'])
         except ValueError:
             repo.index.add(['tmp/next_tweet.txt'])
-            
+
         repo.index.commit(message)
 
         origin = repo.remotes[0]
@@ -102,7 +102,7 @@ class HumanGenomeBot():
         url = urlopen(URL)
         try:
             output = open('tmp/zipFile.gz', 'wb')        
-        except FileNotFoundError:
+        except (FileNotFoundError, OSError):
             output = open('/tmp/zipFile.gz', 'wb')        
         output.write(url.read())
         output.close()
@@ -111,7 +111,7 @@ class HumanGenomeBot():
         try:
             seq = pd.read_csv('tmp/zipFile.gz', compression='gzip')  
             os.remove('tmp/zipFile.gz')
-        except FileNotFoundError:
+        except FileNotFoundError, OSError:
             seq = pd.read_csv('/tmp/zipFile.gz', compression='gzip')  
             os.remove('/tmp/zipFile.gz')
 
