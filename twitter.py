@@ -96,7 +96,7 @@ class HumanGenomeBot():
         seq = pd.read_csv('tmp/zipFile.gz', compression='gzip')  
         os.remove('tmp/zipFile.gz')
 
-        one_long = ''.join(seq['>chr{}'.format(chromosome)])[:1000]
+        one_long = ''.join(seq['>chr{}'.format(chromosome)])
         n_tweets = len(one_long) // tweet_length
 
         # Get tweet based on slice of chromosome string
