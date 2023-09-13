@@ -2,7 +2,6 @@ import os
 import json
 import tweepy
 import collections
-import requests
 import numpy as np
 import pandas as pd
 from urllib.request import urlopen  

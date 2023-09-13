@@ -1,1 +1,0 @@
-chromosome=1,index=0,last_tweet=,end_index=
