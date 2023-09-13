@@ -82,7 +82,6 @@ class HumanGenomeBot():
         blob.upload_from_string(next_tweet)
 
 
-
     def tweet(self, tweet_length=280, commit=False, augment_repeats=True):
         """Make the next tweet in the sequence. Identifies the correct region
         of the genome, downloads the relevant chromosome from UCSC, and Tweets
