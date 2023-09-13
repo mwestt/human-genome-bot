@@ -133,7 +133,8 @@ class HumanGenomeBot():
         end_index = index*tweet_length + tweet_length  # Can be used to refactor above slicing for dynamic tweet length
 
         try:  # Try and tweet
-            self.client.create_tweet(text=tweet)
+            # self.client.create_tweet(text=tweet)
+            pass
         except tweepy.errors.Forbidden:  # Duplication, may cause Twitter API 403
 
             if augment_repeats == True:  # Add diacritics at random if sequence repeated
@@ -158,7 +159,7 @@ class HumanGenomeBot():
                 tweet_augment = ''.join([alternative if i in augment_pos else tweet_list[i] for i in range(len(tweet_list))])
 
                 # Tweet augmented tweet
-                self.client.create_tweet(text=tweet_augment)
+                # self.client.create_tweet(text=tweet_augment)
 
         if index == n_tweets:
             index = 0
