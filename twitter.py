@@ -47,7 +47,12 @@ class HumanGenomeBot():
     def commit(self, message='commit from python'):
         """Commit most recent tweet text file to repo."""
 
-        repo = Repo()
+        # print(os.environ.get('GIT_COMMON_DIR'))
+        
+        repo = Repo(search_parent_directories=True)
+        # except:
+        #     repo = Repo(search_parent_directories=True)
+        print(repo.git.status())
 
         try:
             repo.index.add(['/tmp/next_tweet.txt'])
