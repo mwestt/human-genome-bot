@@ -160,7 +160,7 @@ class HumanGenomeBot():
         # Save chromosome, index, and last tweet to disk, commit to repo
         try:
             text_file = open("tmp/next_tweet.txt", "w")
-        except FileNotFoundError:
+        except (FileNotFoundError, OSError):
             text_file = open("/tmp/next_tweet.txt", "w")
 
         text_file.write('chromosome={},index={},last_tweet={},end_index={}'.format(chromosome, index, tweet, end_index))
