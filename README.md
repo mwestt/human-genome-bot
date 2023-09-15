@@ -10,3 +10,5 @@ This repository hosts code for a Twitter bot ([@HumanGenomeBot](https://twitter.
 With each tweet limited to 280 characters, the 3.1 billion bases of the human genome are going to require approximately 11 million tweets to get through. 
 
 With Twitter/X Free-tier access to the API limiting the bot to 50 tweets a day, this project is scheduled to finish in approximately 620 years. 
+
+A grand testament to the awesome complexity of the human genome? Or a subtle dig at the newfound limitations wrought upon the Twitter developer community in its recent tumultuous era? That's for you to decide.
